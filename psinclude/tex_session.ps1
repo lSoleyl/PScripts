@@ -1,6 +1,11 @@
 ## Utilities for working with Tex-Files
 
 function CreateTexSession($texFile, $sessionFile) {
+  if (-not (Test-Path $texFile)) {
+    red "TeX file doesn't exist!"
+    Exit
+  }
+  
   $imports = GetImports $texFile
   $absTexFile = (Resolve-Path $texFile).Path.Replace('\', '/')
   
@@ -45,8 +50,13 @@ function GetImports($texFile) {
         red "ChapterPath not set in $texFile before using first import"
         return @()
       }
-      $file = $matches[1]
-      $imports += "$importPath\$file.tex"
+      $importName = $matches[1]
+      $file = "$importPath\$importName.tex"
+      if (Test-Path $file) {
+        $imports += $file
+      } else {
+        yellow "TeX file imports a non existing chapter file '$file'"
+      }
     }
   }
   

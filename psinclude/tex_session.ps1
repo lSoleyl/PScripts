@@ -63,6 +63,14 @@ function GetImports($texFile) {
       } else {
         yellow "TeX file imports a non existing chapter file '$file'"
       }
+    } elseif ($line -match "^\\bibliography{(.*?)}") { ## .bib file
+      #treat .bib file as regular import
+      $file = (Resolve-Path ("$texDir\" + $matches[1])).Path
+      if (Test-Path $file) {
+        $imports += $file
+      } else {
+        yellow "Referenced .bib file '$file' is missing!"
+      }
     }
   }
   

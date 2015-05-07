@@ -14,10 +14,9 @@ This script creates sessions for TeX-Studio out of single .tex files. The sessio
 ```
 *This is a private style which isn't openly available, so for now the script isn't of much use for anyone else.*
 
-### Planned features
+The script now also openes .bib files, imported by the `\bibliography` statement
 
-#### Add BibTeX files to session
-The script should optionally add the referenced .bib file to the session.
+### Planned features
 
 #### Support other import styles as well 
 Extend the script so that it recognizes other import statements (`\input`).

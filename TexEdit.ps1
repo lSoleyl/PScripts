@@ -1,4 +1,7 @@
-param([switch]$add, [switch]$del) #Parameters for function selection
+param( [switch]$add,  #Add a new entry.          Syntax: TexEdit -add [EntryName] [TexFile]
+       [switch]$del,  #Remove an existing entry. Syntax: TexEdit -del [EntryName]
+       [switch]$e     #opens all relevant directories in the explorer.
+     ) 
 
 $scriptDir = Split-Path -parent $MyInvocation.MyCommand.Path
 $INCLUDE = "$scriptDir\psinclude"
@@ -36,11 +39,34 @@ function SaveConfig($cfg) {
   $cfg | Export-Clixml $configFile
 }
 
+# This function opens all directories of all encountered files
+function OpenDirectories($files) {
+  $dirs = $files | % { Split-Path $_ } | sort -unique
+  $dirs | % { Invoke-Item $_ }
+}
+
+
+function StartSession($texFile) {
+  $imports = CreateTexSession $texFile $SESSION_FILE
+  Invoke-Item $SESSION_FILE
+  if ($e) {
+    OpenDirectories $imports
+  }
+}
+
+
+
+
+
+#### Program entry ######
 
 $cfg = GetConfig
 [array]$entries = $cfg.Entries
 
-Write-Host "TexEdit v1.0a"
+Write-Host "TexEdit v1.1a"
+
+
+### Command line ###
 
 if ($add) { ## Adding an entry
   if ($args.Length -ne 2) {
@@ -89,6 +115,7 @@ if ($add) { ## Adding an entry
 }
 
 
+### Interactive program flow ###
 
 Write-Host "Select TeX-File:"
 Write-Host ""
@@ -112,8 +139,7 @@ switch ($choice)
 {
   "" {
        if ($cfg.Last -ne $null) {
-         CreateTexSession $cfg.Last.File $SESSION_FILE
-         Invoke-Item $SESSION_FILE
+         StartSession $cfg.Last.File
        } else {
          Exit ##Invalid option
        }
@@ -126,8 +152,7 @@ switch ($choice)
     $cfg.Last = $entry
     SaveConfig $cfg
     
-    CreateTexSession $entry.File $SESSION_FILE
-    Invoke-Item $SESSION_FILE
+    StartSession $entry.File
   }
 }
 

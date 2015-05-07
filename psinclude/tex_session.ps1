@@ -1,5 +1,9 @@
 ## Utilities for working with Tex-Files
 
+# This function creates a session file for TeX-Studio
+# The file will be placed at $sessionFile and will be 
+# generated form $texFile.
+# As a result it returns all TeXFiles, the session contains
 function CreateTexSession($texFile, $sessionFile) {
   if (-not (Test-Path $texFile)) {
     red "TeX file doesn't exist!"
@@ -7,7 +11,7 @@ function CreateTexSession($texFile, $sessionFile) {
   }
   
   $imports = GetImports $texFile
-  $absTexFile = (Resolve-Path $texFile).Path.Replace('\', '/')
+  $absTexFile = (Resolve-Path $texFile).Path
   
   $imports = @($absTexFile) + $imports
   
@@ -23,7 +27,7 @@ function CreateTexSession($texFile, $sessionFile) {
   }
   
   $lines += "MasterFile="
-  $lines += "CurrentFile=$absTexFile"
+  $lines += ("CurrentFile=" + $absTexFile.Replace('\', '/'))
   $lines += "Bookmarks=@Invalid()"
   $lines += ""
   $lines += "[InternalPDFViewer]"
@@ -31,6 +35,8 @@ function CreateTexSession($texFile, $sessionFile) {
   $lines += "Embedded=false"
   
   $lines | Out-File -Encoding Default $sessionFile
+  
+  return $imports
 }
 
 

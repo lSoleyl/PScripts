@@ -65,11 +65,14 @@ function GetImports($texFile) {
       }
     } elseif ($line -match "^\\bibliography{(.*?)}") { ## .bib file
       #treat .bib file as regular import
-      $file = (Resolve-Path ("$texDir\" + $matches[1])).Path
-      if (Test-Path $file) {
-        $imports += $file
+      $bibName = $matches[1] ## $matches[1] can't be used in string interpolation
+
+      if (Test-Path "$texDir\$bibName") {
+        $imports += (Resolve-Path "$texDir\$bibName").Path
+      } elseif (Test-Path "$texDir\$bibName.bib") { ## Suffix .bib is optional
+        $imports += (Resolve-Path "$texDir\$bibName.bib").Path
       } else {
-        yellow "Referenced .bib file '$file' is missing!"
+        yellow "Referenced .bib file '$bibName' is missing!"
       }
     }
   }

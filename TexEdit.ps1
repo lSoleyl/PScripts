@@ -63,7 +63,7 @@ function StartSession($texFile) {
 $cfg = GetConfig
 [array]$entries = $cfg.Entries
 
-Write-Host "TexEdit v1.1a"
+Write-Host "TexEdit v1.2a"
 
 
 ### Command line ###

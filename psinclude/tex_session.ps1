@@ -25,9 +25,11 @@ function CreateTexSession($texFile, $sessionFile) {
     $lines += "File$i\FirstLine=0"
     $lines += "File$i\FoldedLines="
   }
+
+  $unixTexFile = $absTexFile.Replace('\', '/')
   
-  $lines += "MasterFile="
-  $lines += ("CurrentFile=" + $absTexFile.Replace('\', '/'))
+  $lines += "MasterFile=$unixTexFile"
+  $lines += "CurrentFile=$unixTexFile"
   $lines += "Bookmarks=@Invalid()"
   $lines += ""
   $lines += "[InternalPDFViewer]"
